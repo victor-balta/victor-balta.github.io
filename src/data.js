@@ -63,7 +63,7 @@ export const projects = [
         description: "Niche wellness and travel platform.",
         tech: ["Content", "SEO"],
         link: "https://thermelust.com",
-        status: "Development",
+        status: "live",
         image: '/projects/therme_logo.webp'
     },
     {
@@ -71,7 +71,7 @@ export const projects = [
         description: "Real estate/housing platform project.",
         tech: ["Data", "Listing"],
         link: "https://cheaphouz.com",
-        status: "Development",
+        status: "live",
         image: '/projects/cheaphouz_logo.jpg'
     },
     {

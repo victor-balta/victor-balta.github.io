@@ -23,7 +23,7 @@ const getStatusColor = (status) => {
 
 <template>
   <div class="min-h-screen bg-base-100 flex justify-center py-10 px-4">
-    <div class="w-full max-w-md space-y-8 animate-fade-in-up">
+    <div class="w-full max-w-[540px] space-y-8 animate-fade-in-up">
       
       <!-- Bio Header (Link-in-Bio Style) -->
       <header class="text-center space-y-4">
