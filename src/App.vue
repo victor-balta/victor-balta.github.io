@@ -1,25 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { databases, APPWRITE_CONFIG, getImageUrl } from './lib/appwrite'
-import { Query } from 'appwrite'
+import { ref } from 'vue'
+import { profile as profileData, experience as experienceData, projects as projectsData, skills as skillsData } from './data'
 
-// Placeholder data
-const profile = ref({
-  name: "Victor Balta",
-  title: "Product Manager",
-  about: "Building user-centric products. Experienced in agile methodologies and data-driven decisions.",
-  socials: [
-    { name: "LinkedIn", url: "#", icon: "linkedin" },
-    { name: "Twitter", url: "#", icon: "twitter" },
-    { name: "Email", url: "mailto:hello@example.com", icon: "mail" }
-  ]
-})
-
-const experience = ref([])
-const projects = ref([])
-const skills = ref(["Product Strategy", "Agile/Scrum", "User Research", "Data Analysis", "Roadmapping", "JIRA", "Figma", "SQL"])
-const isLoading = ref(true)
-const error = ref(null)
+// Use refs if you plan to make this data interactive/filterable later, 
+// otherwise you can use the imported data directly in the template.
+const profile = ref(profileData)
+const experience = ref(experienceData)
+const projects = ref(projectsData)
+const skills = ref(skillsData)
 
 // Helper for status colors
 const getStatusColor = (status) => {
@@ -31,100 +19,6 @@ const getStatusColor = (status) => {
     default: return 'badge-ghost';
   }
 }
-
-const fetchData = async () => {
-  if (!APPWRITE_CONFIG.DATABASE_ID || APPWRITE_CONFIG.DATABASE_ID === 'your_database_id') {
-    isLoading.value = false
-    // Fallback data
-    experience.value = [
-      {
-        role: "Senior Product Manager",
-        company: "Tech Solutions Inc.",
-        period: "2023 - Present",
-        description: "Leading the B2B SaaS platform roadmap.",
-        imageId: null
-      },
-      {
-        role: "Product Owner",
-        company: "Digital Innovations",
-        period: "2021 - 2023",
-        description: "Managed mobile app backlog & V2 launch.",
-        imageId: null
-      }
-    ]
-    projects.value = [
-      {
-        name: "Market Analytics Dashboard",
-        description: "Tracking market trends & competitor analysis.",
-        tech: ["Data Viz", "Analytics"],
-        link: "#",
-        status: "Live",
-        imageId: null
-      },
-      {
-        name: "Customer Feedback Loop",
-        description: "Automated user feedback system.",
-        tech: ["Automation", "NLP"],
-        link: "#",
-        status: "Sold",
-        imageId: null
-      },
-      {
-        name: "Legacy CRM",
-        description: "Internal tool for sales team management.",
-        tech: ["Vue", "Firebase"],
-        link: "#",
-        status: "Offline",
-        imageId: null
-      }
-    ]
-    return
-  }
-
-  try {
-    const [expResponse, projResponse] = await Promise.all([
-      databases.listDocuments(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.EXPERIENCE_COLLECTION_ID,
-        [Query.orderDesc('year_start')]
-      ),
-      databases.listDocuments(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.PROJECTS_COLLECTION_ID
-      )
-    ])
-    
-    experience.value = expResponse.documents.map(doc => {
-      // Format period string from start/end years if available
-      let period = doc.period;
-      if (doc.year_start) {
-        period = `${doc.year_start} - ${doc.year_end || 'Present'}`;
-      }
-      
-      return {
-        ...doc,
-        period, // Use formatted period or fallback to manual string
-        image: doc.imageId ? getImageUrl(APPWRITE_CONFIG.BUCKET_ID, doc.imageId) : null
-      }
-    })
-    
-    projects.value = projResponse.documents.map(doc => ({
-      ...doc,
-      image: doc.imageId ? getImageUrl(APPWRITE_CONFIG.BUCKET_ID, doc.imageId) : null,
-      status: doc.status || 'Development' // Default if missing
-    }))
-
-  } catch (err) {
-    console.error("Failed to fetch data:", err)
-    error.value = "Failed to load content."
-  } finally {
-    isLoading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchData()
-})
 </script>
 
 <template>
@@ -133,9 +27,10 @@ onMounted(() => {
       
       <!-- Bio Header (Link-in-Bio Style) -->
       <header class="text-center space-y-4">
-        <div class="avatar placeholder online">
-          <div class="bg-neutral text-neutral-content rounded-full w-24 ring ring-primary ring-offset-base-100 ring-offset-2 shadow-xl">
-            <span class="text-3xl font-bold">{{ profile.name.charAt(0) }}</span>
+        <div class="avatar online" :class="{ 'placeholder': !profile.image }">
+          <div class="rounded-full w-24 ring ring-primary ring-offset-base-100 ring-offset-2 shadow-xl" :class="{ 'bg-neutral text-neutral-content': !profile.image }">
+            <img v-if="profile.image" :src="profile.image" :alt="profile.name" />
+            <span v-else class="text-3xl font-bold">{{ profile.name.charAt(0) }}</span>
           </div>
         </div>
         <div>
@@ -156,62 +51,67 @@ onMounted(() => {
       <div class="divider text-xs opacity-50">PORTFOLIO</div>
 
       <!-- Experience Accordion -->
-      <section class="space-y-4">
+      <!-- Experience Section (Uncollapsed) -->
+      <section class="space-y-6">
         <h2 class="text-lg font-bold text-center opacity-80 uppercase tracking-widest text-xs">Experience</h2>
-        <div class="join join-vertical w-full bg-base-200/50 rounded-2xl shadow-sm">
-          <div v-for="(job, index) in experience" :key="index" class="collapse collapse-arrow join-item border-base-300 border-b last:border-b-0">
-            <input type="radio" name="experience-accordion" :checked="index === 0" /> 
-            <div class="collapse-title flex items-center gap-3 p-4">
-              <div class="avatar placeholder">
-                <div class="bg-neutral-focus text-neutral-content rounded-xl w-10 h-10 ring-1 ring-base-content/10">
-                   <img v-if="job.image" :src="job.image" :alt="job.company" />
-                   <span v-else class="text-xs">{{ job.company.charAt(0) }}</span>
+        <div class="flex flex-col gap-6">
+          <div v-for="(job, index) in experience" :key="index" class="flex gap-4 items-start">
+            
+            <!-- Logo / Avatar -->
+            <div class="avatar placeholder flex-none">
+                <div class="w-12 h-12 rounded-xl bg-neutral-focus text-neutral-content ring-1 ring-base-content/10 shadow-sm">
+                   <img v-if="job.image" :src="job.image" :alt="job.company" class="object-cover" />
+                   <span v-else class="text-lg font-bold">{{ job.company.charAt(0) }}</span>
                 </div>
-              </div>
-              <div class="text-left flex-1">
-                <div class="font-bold text-sm">{{ job.role }}</div>
-                <div class="text-xs opacity-70">{{ job.company }}</div>
-              </div>
             </div>
-            <div class="collapse-content text-sm opacity-80"> 
-              <p class="pb-2">{{ job.description }}</p>
-              <div class="badge badge-sm badge-ghost">{{ job.period }}</div>
+
+            <div class="flex-1 space-y-1">
+              <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1">
+                <h3 class="font-bold text-sm">{{ job.role }}</h3>
+                <span class="badge badge-sm badge-ghost opacity-70 whitespace-nowrap">{{ job.period }}</span>
+              </div>
+              
+              <div class="text-xs font-semibold opacity-70">{{ job.company }}</div>
+              
+              <p class="text-sm opacity-80 leading-relaxed pt-1">{{ job.description }}</p>
             </div>
+
           </div>
         </div>
       </section>
 
-      <!-- Projects List (Horizontal Cards) -->
-      <section class="space-y-4">
+      <!-- Projects List (Compact) -->
+      <section class="space-y-6">
         <h2 class="text-lg font-bold text-center opacity-80 uppercase tracking-widest text-xs">Projects</h2>
         
-        <div class="flex flex-col gap-4">
-          <div v-for="(project, index) in projects" :key="index" 
-               class="card card-side bg-base-100 shadow-sm hover:shadow-md transition-all duration-300 border border-base-200 rounded-2xl p-2 group items-center">
+        <div class="flex flex-col gap-6">
+          <div v-for="(project, index) in projects" :key="index" class="flex gap-4 items-start group">
             
-            <!-- Small Project Image/Thumbnail -->
-            <div class="w-20 h-20 flex-none bg-base-300 rounded-xl overflow-hidden ml-2">
-              <img v-if="project.image" :src="project.image" :alt="project.name" class="w-full h-full object-cover" />
-              <div v-else class="w-full h-full flex items-center justify-center text-xs font-bold opacity-30">IMG</div>
+            <!-- Project Logo -->
+            <div class="avatar placeholder flex-none">
+              <div class="w-12 h-12 rounded-xl bg-base-200 text-base-content ring-1 ring-base-content/10 overflow-hidden">
+                <img v-if="project.image" :src="project.image" :alt="project.name" class="object-cover w-full h-full" />
+                <span v-else class="text-xs font-bold opacity-30">IMG</span>
+              </div>
             </div>
 
-            <div class="card-body p-4 w-full">
-              <div class="flex justify-between items-start gap-2">
-                <h3 class="card-title text-base font-bold">{{ project.name }}</h3>
-                <a v-if="project.link" :href="project.link" target="_blank" class="btn btn-xs btn-circle btn-ghost opacity-50 hover:opacity-100">↗</a>
-              </div>
-              
-              <p class="text-xs opacity-70 line-clamp-2 -mt-1">{{ project.description }}</p>
-              
-              <div class="flex flex-wrap items-center gap-2 mt-2">
+            <div class="flex-1 space-y-1">
+              <div class="flex justify-between items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <h3 class="font-bold text-sm group-hover:text-primary transition-colors">{{ project.name }}</h3>
+                    <a v-if="project.link" :href="project.link" target="_blank" class="opacity-50 hover:opacity-100 transition-opacity text-xs">↗</a>
+                </div>
                 <!-- Status Badge -->
-                <div class="badge badge-xs text-[10px] font-bold uppercase tracking-wider p-2" :class="getStatusColor(project.status)">
+                 <div class="badge badge-xs text-[10px] font-bold uppercase tracking-wider p-2 bg-opacity-20 border-none" :class="getStatusColor(project.status).replace('badge-', 'text-') + ' ' + getStatusColor(project.status).replace('badge-', 'bg-')">
                   {{ project.status }}
                 </div>
-                <!-- Tech Stack (optional, maybe hide on mobile if too crowded) -->
-                <span v-if="project.tech" class="text-[10px] opacity-50 truncate max-w-[120px]">
-                   {{ Array.isArray(project.tech) ? project.tech.join(', ') : project.tech }}
-                </span>
+              </div>
+              
+              <p class="text-sm opacity-80 leading-relaxed">{{ project.description }}</p>
+              
+              <!-- Tech Stack -->
+              <div v-if="project.tech" class="text-[10px] opacity-50 pt-1 font-mono">
+                  {{ Array.isArray(project.tech) ? project.tech.join(' · ') : project.tech }}
               </div>
             </div>
           </div>
