@@ -6,7 +6,7 @@ export const profile = {
     about: "A practical product builder who transforms insights into impact. I dig into the data, champion the customer voice, and don’t shy away from building my own prototypes to solve complex problems.",
     socials: [
         { name: "LinkedIn", url: "https://www.linkedin.com/in/victor-balta", icon: "linkedin" },
-        { name: "GitHub", url: "https://github.com/victorbalta", icon: "github" }
+        { name: "GitHub", url: "https://github.com/victor-balta", icon: "github" }
     ]
 }
 
