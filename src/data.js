@@ -15,28 +15,28 @@ export const experience = [
         role: "Senior Product Manager - Growth",
         company: "Rail Europe",
         period: "Feb 2025 - Present",
-        description: "Leading SEO recovery, mobile-first optimization, and A/B testing frameworks. Improved conversion rate by 25% and established a data-driven experimentation culture across acquisition, conversion, and retention.",
+        description: "A leading distributor of European train tickets and passes, simplifying rail travel across the continent through partnerships with over 200 European train operators.",
         image: '/work/raileurope_logo.jpeg'
     },
     {
         role: "Product Manager -> Head of Product",
         company: "Virail",
         period: "Apr 2020 - Feb 2025",
-        description: "Led transition from meta-search to OTA model driving 45% revenue uplift. Scaled engineering team from 4 to 8, ran 80+ A/B tests boosting revenue by 15%, and drove SEO growth for 100k+ daily users.",
+        description: "An online transportation search engine and comparison platform that helps users find and book flights, trains, buses, and carpooling options globally.",
         image: '/work/virail_logo.jpeg'
     },
     {
         role: "Product Manager - Integration",
         company: "European Medicines Agency",
         period: "Mar 2017 - Apr 2019",
-        description: "Orchestrated Cloud Identity Platform implementation improving SLA by 84% and reducing costs by 70%. Revamped data mastering and implemented CRM systems.",
+        description: "A decentralized agency of the EU responsible for the scientific evaluation, supervision, and safety monitoring of medicines to protect public and animal health.",
         image: '/work/ema_logo.jpeg'
     },
     {
         role: "Data Analyst Trainee",
         company: "European Railway Agency",
         period: "Mar 2016 - Aug 2016",
-        description: "Developed web apps for crowd-sourced data and provided data visualisation solutions using ArcGIS and JavaScript custom graphical representations.",
+        description: "An EU agency dedicated to developing a single, safe, and interoperable European railway area by setting standards and harmonizing regulations.",
         image: '/work/era_logo.jpeg'
     }
 ]
