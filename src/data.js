@@ -1,4 +1,3 @@
-
 export const profile = {
     name: "Victor Balta",
     title: "Product Builder",
@@ -88,7 +87,23 @@ export const projects = [
         tech: ["Aggregation", "Search"],
         link: "https://statiunibalneare.com",
         status: "Live",
-        image: '/projects/statiunibalneare_logo.jpeg'
+        image: '/projects/therme_logo.webp'
+    },
+    {
+        name: "maddent.de",
+        description: "Website for a modern dental practice located in Berlin.",
+        tech: ["Web", "Local Business"],
+        link: "https://maddent.de",
+        status: "Live",
+        image: '/projects/maddent.png'
+    },
+    {
+        name: "explodingtravel.com",
+        description: "Travel platform to discover and compare tours, attractions, and activities globally.",
+        tech: ["Web", "Travel"],
+        link: "https://explodingtravel.com",
+        status: "Live",
+        image: '/projects/explodingtravel_logo.png'
     }
 ]
 
